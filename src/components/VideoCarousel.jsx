@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // Helper function to check if URL is Vimeo and convert to embed URL
 const getVimeoEmbedUrl = (url, autoplay = false) => {
@@ -25,7 +25,7 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px", visi
 
   // Calculate visible videos (show 4 on desktop, 2 on tablet, 1 on mobile)
   // If customVisibleCount is provided, use that instead
-  const getVisibleCount = () => {
+  const getVisibleCount = useCallback(() => {
     if (customVisibleCount) return customVisibleCount;
     if (typeof window !== 'undefined') {
       if (window.innerWidth >= 1024) return 4;
@@ -33,7 +33,7 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px", visi
       return 1;
     }
     return 4;
-  };
+  }, [customVisibleCount]);
 
   // Handle window resize
   useEffect(() => {
@@ -45,7 +45,7 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px", visi
     setVisibleCount(getVisibleCount());
 
     return () => window.removeEventListener('resize', handleResize);
-  }, [customVisibleCount]);
+  }, [getVisibleCount]);
   const maxIndex = Math.max(0, videos.length - visibleCount);
 
   // Ensure current index doesn't exceed max
