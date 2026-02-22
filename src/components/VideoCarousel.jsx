@@ -1,8 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px" }) => {
+// Helper function to check if URL is Vimeo and convert to embed URL
+const getVimeoEmbedUrl = (url, autoplay = false) => {
+  const vimeoRegex = /vimeo\.com\/(\d+)/;
+  const match = url.match(vimeoRegex);
+  if (match) {
+    return `https://player.vimeo.com/video/${match[1]}?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0&vimeo_logo=0&dnt=1&autoplay=${autoplay ? 1 : 0}&muted=1&loop=1`;
+  }
+  return null;
+};
+
+const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px", visibleCount: customVisibleCount }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(customVisibleCount || 4);
   const carouselRef = useRef(null);
 
   const nextSlide = () => {
@@ -14,7 +24,9 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px" }) =>
   };
 
   // Calculate visible videos (show 4 on desktop, 2 on tablet, 1 on mobile)
+  // If customVisibleCount is provided, use that instead
   const getVisibleCount = () => {
+    if (customVisibleCount) return customVisibleCount;
     if (typeof window !== 'undefined') {
       if (window.innerWidth >= 1024) return 4;
       if (window.innerWidth >= 768) return 2;
@@ -33,7 +45,7 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px" }) =>
     setVisibleCount(getVisibleCount());
 
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [customVisibleCount]);
   const maxIndex = Math.max(0, videos.length - visibleCount);
 
   // Ensure current index doesn't exceed max
@@ -63,32 +75,13 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px" }) =>
           }}
         >
           {videos.map((video, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 px-2"
-              style={{ width: `${100 / visibleCount}%` }}
-            >
-              <div className="group/video relative overflow-hidden rounded-2xl glass hover:bg-white/10 transition-all duration-500">
-                <div
-                  className="mx-auto w-full"
-                  style={{
-                    aspectRatio: aspectRatio,
-                    maxHeight: maxHeight,
-                  }}
-                >
-                  <video
-                    src={video.video}
-                    className="w-full h-full object-contain bg-navy-light rounded-xl"
-                    controls
-                    playsInline
-                    preload="metadata"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-navy to-transparent opacity-0 group-hover/video:opacity-100 transition-opacity duration-300">
-                  <h3 className="text-base font-bold text-white">{video.title}</h3>
-                </div>
-              </div>
-            </div>
+            <VideoCard 
+              key={index} 
+              video={video} 
+              aspectRatio={aspectRatio} 
+              maxHeight={maxHeight} 
+              width={`${100 / visibleCount}%`}
+            />
           ))}
         </div>
       </div>
@@ -118,6 +111,69 @@ const VideoCarousel = ({ videos, aspectRatio = "16/9", maxHeight = "300px" }) =>
             }`}
           />
         ))}
+      </div>
+    </div>
+  );
+};
+
+
+// Individual video card component with hover autoplay
+const VideoCard = ({ video, aspectRatio, maxHeight, width }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [iframeKey, setIframeKey] = useState(0);
+  
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    // Force iframe reload with autoplay enabled
+    setIframeKey(prev => prev + 1);
+  };
+  
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    // Reset to non-autoplay state
+    setIframeKey(prev => prev + 1);
+  };
+
+  const vimeoUrl = getVimeoEmbedUrl(video.video, isHovered);
+
+  return (
+    <div
+      className="flex-shrink-0 px-2"
+      style={{ width: width }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="group/video relative overflow-hidden rounded-2xl glass hover:bg-white/10 transition-all duration-500 cursor-pointer">
+        <div
+          className="mx-auto w-full relative"
+          style={{
+            aspectRatio: aspectRatio,
+            maxHeight: maxHeight,
+          }}
+        >
+          {vimeoUrl ? (
+            <>
+                      <iframe
+                        key={iframeKey}
+                        src={vimeoUrl}
+                        className="w-full h-full rounded-xl"
+                        frameBorder="0"
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                        allowFullScreen
+                        title={video.title}
+                      />
+
+            </>
+          ) : (
+            <video
+              src={video.video}
+              className="w-full h-full object-contain bg-navy-light rounded-xl"
+              controls
+              playsInline
+              preload="metadata"
+            />
+          )}
+        </div>
       </div>
     </div>
   );

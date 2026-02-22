@@ -11,6 +11,23 @@ function App() {
   const [portfolioVisible, setPortfolioVisible] = useState(false);
   const portfolioRef = useRef(null);
 
+  // Short-form video portfolio data with Vimeo links
+  const shortFormVideos = [
+    { video: 'https://vimeo.com/1167133719', title: 'Short Form Video 1' },
+    { video: 'https://vimeo.com/1167133624', title: 'Short Form Video 2' },
+    { video: 'https://vimeo.com/1167133569', title: 'Short Form Video 3' },
+    { video: 'https://vimeo.com/1167133540', title: 'Short Form Video 4' },
+    { video: 'https://vimeo.com/1167133660', title: 'Short Form Video 5' },
+    { video: 'https://vimeo.com/1167133795', title: 'Short Form Video 6' },
+    { video: 'https://vimeo.com/1167133890', title: 'Short Form Video 7' },
+  ];
+
+  // Long-form video portfolio data with Vimeo links
+  const longFormVideos = [
+    { video: 'https://vimeo.com/1167140813', title: 'Long Form Video 1' },
+    { video: 'https://vimeo.com/1167140648', title: 'Long Form Video 2' },
+  ];
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -69,7 +86,7 @@ function App() {
               <div className="absolute -inset-3 bg-gradient-to-r from-accent-blue to-accent-purple rounded-3xl opacity-50 blur-md"></div>
               <div className="relative w-72 h-72 lg:w-96 lg:h-96 overflow-hidden rounded-3xl">
                 <img 
-                  src="/hero-image.jpeg" 
+                  src="https://res.cloudinary.com/dvp7nulhg/image/upload/v1771779153/WhatsApp_Image_2026-02-22_at_4.12.04_PM_ghi6n1.jpg" 
                   alt="Samarth - Professional Video Editor"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -83,19 +100,19 @@ function App() {
             <div className="absolute -right-4 bottom-1/3 w-3 h-3 bg-accent-purple rounded-full animate-pulse"></div>
             <div className="absolute -left-16 bottom-20 animate-float" style={{ animationDelay: '0.5s' }}>
               <div className="glass p-3 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
-                <img src="/Assets/Adobe_Premiere_Pro_CC_icon.svg.png" alt="Premiere Pro" className="w-10 h-10 object-contain"/>
+                <img src="https://res.cloudinary.com/dvp7nulhg/image/upload/v1771779230/Adobe_Premiere_Pro_CC_icon.svg_hj45p2.png" alt="Premiere Pro" className="w-10 h-10 object-contain"/>
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Premiere Pro</span>
               </div>
             </div>
             <div className="absolute -right-12 top-20 animate-float" style={{ animationDelay: '1s' }}>
               <div className="glass p-3 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
-                <img src="/Assets/Adobe_After_Effects_CC_icon.svg.png" alt="After Effects" className="w-10 h-10 object-contain"/>
+                <img src="https://res.cloudinary.com/dvp7nulhg/image/upload/v1771779243/Adobe_After_Effects_CC_icon.svg_p0qn9q.png" alt="After Effects" className="w-10 h-10 object-contain"/>
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">After Effects</span>
               </div>
             </div>
             <div className="absolute left-8 -bottom-8 animate-float" style={{ animationDelay: '1.5s' }}>
               <div className="glass p-2 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group">
-                <img src="/Assets/Adobe_Photoshop_CC_icon.svg.png" alt="Photoshop" className="w-8 h-8 object-contain"/>
+                <img src="https://res.cloudinary.com/dvp7nulhg/image/upload/v1771779254/Adobe_Photoshop_CC_icon.svg_v8usm1.png" alt="Photoshop" className="w-8 h-8 object-contain"/>
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Photoshop</span>
               </div>
             </div>
@@ -270,36 +287,28 @@ function App() {
             </p>
           </div>
 
-          {/* Video Carousel - Reels & Shorts */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-6 text-center">Reels & Shorts</h3>
+          {/* Short-Form Videos Carousel */}
+          <div className={`mb-16 transition-all duration-1000 delay-300 transform ${portfolioVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h3 className="text-2xl font-bold mb-6 text-center">
+              <span className="gradient-text">Short-Form Content</span>
+            </h3>
             <VideoCarousel 
-              videos={[
-                { title: '', video: '/Assets/Short/1901_1.mp4' },
-                { title: '', video: '/Assets/Short/02_1.mp4' },
-                { title: '', video: '/Assets/Short/reel1.mp4' },
-                { title: '', video: '/Assets/Short/reel2.mp4' },
-                { title: '', video: '/Assets/Short/reel3.mp4' },
-                { title: '', video: '/Assets/Short/32.mp4' },
-                { title: '', video: '/Assets/Short/reel 26.mp4' },
-                { title: '', video: '/Assets/Short/What do you do for work 2.mp4' }
-              ]}
-              aspectRatio="9/16"
-              maxHeight="400px"
+              videos={shortFormVideos} 
+              aspectRatio="9/16" 
+              maxHeight="500px" 
             />
           </div>
 
-          {/* Video Carousel - Long Form */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-6 text-center">Long Form</h3>
+          {/* Long-Form Videos Carousel */}
+          <div className={`mb-16 transition-all duration-1000 delay-400 transform ${portfolioVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h3 className="text-2xl font-bold mb-6 text-center">
+              <span className="gradient-text">Long-Form Content</span>
+            </h3>
             <VideoCarousel 
-              videos={[
-                { title: '', video: '/Assets/Long/Intro Raw_2.mp4' },
-                { title: '', video: '/Assets/Long/Sample intro.mp4' },
-                { title: '', video: '/Assets/Long/Golai Doc.mp4' }
-              ]}
-              aspectRatio="16/9"
-              maxHeight="300px"
+              videos={longFormVideos} 
+              aspectRatio="16/9" 
+              maxHeight="600px" 
+              visibleCount={2}
             />
           </div>
 
